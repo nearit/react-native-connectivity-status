@@ -5,15 +5,9 @@
 //  Copyright © 2017 Near Srl. All rights reserved.
 //
 
-#if __has_include("RCTBridgeModule.h")
-#import "RCTBridgeModule.h"
-#import "RCTEventEmitter.h"
-#import "RCTUtils.h"
-#else
 #import <React/RCTBridgeModule.h>
 #import <React/RCTEventEmitter.h>
 #import <React/RCTUtils.h>
-#endif
 
 #import <CoreLocation/CoreLocation.h>
 #import <CoreBluetooth/CoreBluetooth.h>
