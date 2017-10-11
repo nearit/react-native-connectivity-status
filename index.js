@@ -1,8 +1,34 @@
 
-import { NativeModules, NativeEventEmitter } from 'react-native'
+import { Platform, NativeModules, NativeEventEmitter } from 'react-native'
 
 const { RNConnectivityStatus } = NativeModules
 
-export const addConnectivityStatusListener = connectivityListener => new NativeEventEmitter(RNConnectivityStatus).addListener("RNConnectivityStatus", connectivityListener)
+export default class ConnectivityManager {
+  static _eventEmitter = new NativeEventEmitter(RNConnectivityStatus)
 
-export default RNConnectivityStatus
+  static addStatusListener (connectivityListener) {
+    return ConnectivityManager._eventEmitter.addListener('RNConnectivityStatus', connectivityListener)
+  }
+
+  static isBluetoothEnabled () {
+    return RNConnectivityStatus.isBluetoothEnabled()
+  }
+
+  static enableBluetooth () {
+    return Platform.select({
+      ios: () => Promise.resolve(true),
+      android: () => RNConnectivityStatus.enableBluetooth()
+    })()
+  }
+
+  static isLocationEnabled () {
+    return RNConnectivityStatus.isLocationEnabled()
+  }
+
+  static enableLocation () {
+    return Platform.select({
+      ios: () => Promise.resolve(true),
+      android: () => RNConnectivityStatus.enableLocation()
+    })()
+  }
+}
