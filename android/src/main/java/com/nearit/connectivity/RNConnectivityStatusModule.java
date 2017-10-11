@@ -135,9 +135,13 @@ public class RNConnectivityStatusModule extends ReactContextBaseJavaModule imple
 
   @ReactMethod
   public void isLocationEnabled(final Promise promise) {
-    LocationManager lm = (LocationManager) reactContext.getSystemService(Context.LOCATION_SERVICE);
     try {
-      promise.resolve(lm.isProviderEnabled(LocationManager.GPS_PROVIDER));
+      final LocationManager lm = (LocationManager) getReactApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
+      boolean anyLocationProv = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+      anyLocationProv |= lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+      promise.resolve(anyLocationProv);
     } catch (Exception e) {
       promise.reject("LOCATION_CHECK_ERROR", e.getMessage());
     }
