@@ -1,10 +1,20 @@
 {
   "name": "react-native-connectivity-status",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A ReactNative module to check Bluetooth and Location status on Android and iOS",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "author": {
+    "name": "Mattia Panzeri",
+    "email": "mattia.panzeri93@gmail.com",
+    "url": "https://github.com/panz3r"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nearit/react-native-connectivity-status.git"
+  },
+  "homepage": "https://github.com/nearit/react-native-connectivity-status",
+  "bugs": {
+    "url": "https://github.com/nearit/react-native-connectivity-status/issues"
   },
   "keywords": [
     "react-native",
@@ -13,11 +23,10 @@
     "bluetooth",
     "location"
   ],
-  "author": {
-    "name": "Mattia Panzeri",
-    "email": "mattia.panzeri93@gmail.com"
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "license": "MIT",
   "peerDependencies": {
     "react-native": ">=0.41.2"
   }
