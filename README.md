@@ -1,5 +1,14 @@
 
 # React-native-connectivity-status
+> A [React Native](https://facebook.github.io/react-native/) module to check Bluetooth and Location status on Android and iOS
+
+[![license](https://img.shields.io/github/license/nearit/react-native-connectivity-status.svg)](https://github.com/nearit/react-native-connectivity-status/blob/master/LICENSE.md)
+[![npm](https://img.shields.io/npm/v/react-native-connectivity-status.svg)](https://www.npmjs.com/package/react-native-connectivity-status)
+
+[![React Native](https://img.shields.io/badge/RN-0.41.2+-green.svg)](https://facebook.github.io/react-native/)
+![platforms](https://img.shields.io/badge/platforms-Android%20%7C%20iOS-brightgreen.svg)
+
+[![Gitter](https://img.shields.io/gitter/room/nearit/Lobby.svg)](https://gitter.im/nearit/Lobby)
 
 ## Getting started
 
@@ -7,39 +16,11 @@ Add `react-native-connectivity-status` module to your project
 
 `$ yarn add react-native-connectivity-status`
 
-Follow either one of the installation guides, we suggest you to follow the `Automatic installation` one.
-
-
-### Automatic installation
+And link it
 
 `$ react-native link react-native-connectivity-status`
 
-<br>
-
-### Manual installation
-
-#### iOS
-
-1. In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
-2. Go to `node_modules` ➜ `react-native-connectivity-status` and add `RNConnectivityStatus.xcodeproj`
-3. In XCode, in the project navigator, select your project. Add `libRNConnectivityStatus.a` to your project's `Build Phases` ➜ `Link Binary With Libraries`
-4. Run your project (`Cmd+R`)
-
-#### Android
-
-1. Open up `android/app/src/main/java/[...]/MainActivity.java`
-  - Add `import com.nearit.connectivity.RNConnectivityStatusPackage;` to the imports at the top of the file
-  - Add `new RNConnectivityStatusPackage()` to the list returned by the `getPackages()` method
-2. Append the following lines to `android/settings.gradle`:
-  	```
-  	include ':react-native-connectivity-status'
-  	project(':react-native-connectivity-status').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-connectivity-status/android')
-  	```
-3. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
-  	```
-      compile project(':react-native-connectivity-status')
-  	```
-
+<br/>
 
 ## Usage
 
