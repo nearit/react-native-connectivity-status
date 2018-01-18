@@ -15,10 +15,7 @@ export default class ConnectivityManager {
   }
 
   static enableBluetooth () {
-    return Platform.select({
-      ios: () => Promise.resolve(true),
-      android: () => RNConnectivityStatus.enableBluetooth()
-    })()
+    return RNConnectivityStatus.enableBluetooth()
   }
 
   static isLocationEnabled () {

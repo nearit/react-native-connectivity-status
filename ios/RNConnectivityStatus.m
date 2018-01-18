@@ -8,6 +8,8 @@
 #import <Foundation/Foundation.h>
 #import "RNConnectivityStatus.h"
 
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+
 @implementation RNConnectivityStatus {
   bool hasListeners;
   CLLocationManager *locationManager;
@@ -32,7 +34,11 @@ RCT_EXPORT_MODULE()
     }
     
     if(!bluetoothManager) {
-      bluetoothManager = [[CBCentralManager alloc] initWithDelegate:self queue:dispatch_get_main_queue()];
+      bluetoothManager = [[CBCentralManager alloc] initWithDelegate:self
+                                                              queue:dispatch_get_main_queue()
+                                                            options:@{
+                                                                      CBCentralManagerOptionShowPowerAlertKey: @0
+                                                                  }];
     }
   }
   
@@ -86,6 +92,19 @@ RCT_EXPORT_METHOD(isBluetoothEnabled:(RCTPromiseResolveBlock) resolve
 {
     BOOL btIsActive = bluetoothManager && bluetoothManager.state == CBCentralManagerStatePoweredOn;
     resolve(@(btIsActive));
+}
+
+RCT_EXPORT_METHOD(enableBluetooth:(RCTPromiseResolveBlock) resolve
+                         rejecter:(RCTPromiseRejectBlock) reject)
+{
+    NSLog(@"iOS: trying to open settings");
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"App-Prefs:root=Bluetooth"]];
+    } else {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=Bluetooth"]];
+    }
+
+    resolve(@(YES));
 }
 
 // MARK: CBCentralManager Delegate
