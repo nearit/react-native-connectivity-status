@@ -3,6 +3,7 @@
 > A [React Native](https://facebook.github.io/react-native/) module to check Bluetooth and Location status on Android and iOS
 
 [![license](https://img.shields.io/github/license/nearit/react-native-connectivity-status.svg)](https://github.com/nearit/react-native-connectivity-status/blob/master/LICENSE.md)
+[![Build Status](https://travis-ci.org/nearit/react-native-connectivity-status.svg)](https://travis-ci.org/nearit/react-native-connectivity-status)
 [![npm](https://img.shields.io/npm/v/react-native-connectivity-status.svg)](https://www.npmjs.com/package/react-native-connectivity-status)
 
 [![React Native](https://img.shields.io/badge/RN-0.41.2+-green.svg)](https://facebook.github.io/react-native/)
