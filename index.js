@@ -23,9 +23,6 @@ export default class ConnectivityManager {
   }
 
   static enableLocation () {
-    return Platform.select({
-      ios: () => Promise.resolve(true),
-      android: () => RNConnectivityStatus.enableLocation()
-    })()
+    return RNConnectivityStatus.enableLocation()
   }
 }

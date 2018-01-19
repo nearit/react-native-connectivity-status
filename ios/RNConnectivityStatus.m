@@ -157,6 +157,21 @@ RCT_EXPORT_METHOD(isLocationEnabled:(RCTPromiseResolveBlock) resolve
   resolve(@([self isLocationActiveState]));
 }
 
+RCT_EXPORT_METHOD(enableLocation:(RCTPromiseResolveBlock) resolve
+                          reject:(RCTPromiseRejectBlock) reject)
+{
+    if (CLLocationManager.authorizationStatus != kCLAuthorizationStatusNotDetermined) {
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+    } else {
+        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"App-Prefs:root=Privacy&path=LOCATION"]];
+        } else {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=LOCATION_SERVICES"]];
+        }
+    }
+    resolve(@(YES));
+}
+
 // MARK: CLLocationManagerDelegate
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {

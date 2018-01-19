@@ -65,8 +65,9 @@ ConnectivityManager.enableLocation()
 // Ask user to turn on Bluetooth
 ConnectivityManager.enableBluetooth()
 ```
-**N.B:** This feature is available only on ***Android***, on ***iOS*** no request will be made since the OS does not allow us to do so.
-You should not worry about wrapping this method calls inside a `Platform.select` block since it is done by the module itself.
+
+**ATTENTION:** On `iOS` the `enableLocation` method won't ask the user for `Location Permissions` but will redirect to
+`iOS` location settings screen to allow the user to enable `Location Services`.
 
 ---
 Made with :sparkles: & :heart: by [Mattia Panzeri](https://github.com/panz3r) and [contributors](https://github.com/nearit/react-native-connectivity-status/graphs/contributors)
