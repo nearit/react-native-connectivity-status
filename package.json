@@ -1,6 +1,6 @@
 {
   "name": "react-native-connectivity-status",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "A ReactNative module to check Bluetooth and Location status on Android and iOS",
   "author": {
     "name": "Mattia Panzeri",
