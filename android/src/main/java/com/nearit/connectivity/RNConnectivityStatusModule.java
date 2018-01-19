@@ -47,7 +47,7 @@ public class RNConnectivityStatusModule extends ReactContextBaseJavaModule imple
     public void onReceive(Context context, Intent intent) {
       final String action = intent.getAction();
 
-      if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+      if (action != null && action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
         final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
                 BluetoothAdapter.ERROR);
         boolean active = false;
@@ -71,15 +71,13 @@ public class RNConnectivityStatusModule extends ReactContextBaseJavaModule imple
   private final BroadcastReceiver mLocationReceiver = new BroadcastReceiver() {
     @Override
     public void onReceive(Context context, Intent intent) {
-      boolean isGpsEnabled = false;
-      if (intent.getAction().matches(LocationManager.PROVIDERS_CHANGED_ACTION)) {
-        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-      }
+      final boolean locationEnabled = intent.getAction() != null
+              && intent.getAction().matches(LocationManager.PROVIDERS_CHANGED_ACTION)
+              && checkLocation();
 
       final WritableMap eventMap = new WritableNativeMap();
       eventMap.putString(EVENT_TYPE, "location");
-      eventMap.putBoolean(EVENT_STATUS, isGpsEnabled);
+      eventMap.putBoolean(EVENT_STATUS, locationEnabled);
       getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(RN_CONNECTIVITY_STATUS_TOPIC, eventMap);
     }
   };
@@ -136,12 +134,7 @@ public class RNConnectivityStatusModule extends ReactContextBaseJavaModule imple
   @ReactMethod
   public void isLocationEnabled(final Promise promise) {
     try {
-      final LocationManager lm = (LocationManager) getReactApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-
-      boolean anyLocationProv = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-      anyLocationProv |= lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-      promise.resolve(anyLocationProv);
+      promise.resolve(checkLocation());
     } catch (Exception e) {
       promise.reject("LOCATION_CHECK_ERROR", e.getMessage());
     }
@@ -205,5 +198,17 @@ public class RNConnectivityStatusModule extends ReactContextBaseJavaModule imple
    */
   private boolean checkBluetooth() {
     return BluetoothAdapter.getDefaultAdapter() != null && BluetoothAdapter.getDefaultAdapter().isEnabled();
+  }
+
+  private boolean checkLocation() {
+    boolean locationEnabled = false;
+
+    final LocationManager lm = (LocationManager) getReactApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+    if (lm != null) {
+      locationEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+      locationEnabled |= lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    return locationEnabled;
   }
 }
