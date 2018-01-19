@@ -87,10 +87,27 @@ RCT_EXPORT_MODULE()
 
 // MARK: Bluetooth
 
+- (BOOL)isBluetoothActiveState:(CBManagerState)bluetoothState {
+    switch (bluetoothState) {
+        case CBManagerStateUnknown:
+        case CBManagerStateResetting:
+        case CBManagerStateUnsupported:
+        case CBManagerStateUnauthorized:
+        case CBManagerStatePoweredOff:
+            return NO;
+
+        case CBManagerStatePoweredOn:
+            return YES;
+            
+        default:
+            return NO;
+    }
+}
+
 RCT_EXPORT_METHOD(isBluetoothEnabled:(RCTPromiseResolveBlock) resolve
                             rejecter:(RCTPromiseRejectBlock) reject)
 {
-    BOOL btIsActive = bluetoothManager && bluetoothManager.state == CBCentralManagerStatePoweredOn;
+    BOOL btIsActive = bluetoothManager && [self isBluetoothActiveState:bluetoothManager.state];
     resolve(@(btIsActive));
 }
 
@@ -110,7 +127,9 @@ RCT_EXPORT_METHOD(enableBluetooth:(RCTPromiseResolveBlock) resolve
 // MARK: CBCentralManager Delegate
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
-  [self sendActiveState:@(central.state == CBCentralManagerStatePoweredOn)
+    BOOL centralBtIsActive = central && [self isBluetoothActiveState:central.state];
+  
+    [self sendActiveState:centralBtIsActive
                 forType:@"bluetooth"];
 }
 
