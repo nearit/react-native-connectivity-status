@@ -62,12 +62,10 @@ RCT_EXPORT_MODULE()
 // Will be called when this module's first listener is added.
 - (void)startObserving {
   hasListeners = YES;
-  
-  if (locationManager) {
-    [self sendActiveState:[self isLocationActiveState]
-                  forType:@"location"];
-  }
-  
+
+  [self sendActiveState:CLLocationManager.locationServicesEnabled
+                forType:@"location"];
+
   if (bluetoothManager) {
     [self centralManagerDidUpdateState:bluetoothManager];
   }
@@ -119,7 +117,7 @@ RCT_EXPORT_METHOD(isBluetoothEnabled:(RCTPromiseResolveBlock) resolve
 RCT_EXPORT_METHOD(enableBluetooth:(RCTPromiseResolveBlock) resolve
                          rejecter:(RCTPromiseRejectBlock) reject)
 {
-    NSLog(@"iOS: trying to open settings");
+    NSLog(@"iOS: trying to open Bluetooth settings");
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"App-Prefs:root=Bluetooth"]];
     } else {
@@ -138,7 +136,7 @@ RCT_EXPORT_METHOD(enableBluetooth:(RCTPromiseResolveBlock) resolve
                 forType:@"bluetooth"];
 }
 
-// MARK: Location
+// MARK: Location Permissions
 
 - (BOOL)isLocationActiveState {
   switch (CLLocationManager.authorizationStatus) {
@@ -156,32 +154,44 @@ RCT_EXPORT_METHOD(enableBluetooth:(RCTPromiseResolveBlock) resolve
   }
 }
 
+// MARK: Location Services
+
 RCT_EXPORT_METHOD(isLocationEnabled:(RCTPromiseResolveBlock) resolve
                            rejecter:(RCTPromiseRejectBlock) reject)
 {
-  resolve(@([self isLocationActiveState]));
+    resolve(@(CLLocationManager.locationServicesEnabled));
 }
 
 RCT_EXPORT_METHOD(enableLocation:(RCTPromiseResolveBlock) resolve
                           reject:(RCTPromiseRejectBlock) reject)
 {
-    if (CLLocationManager.authorizationStatus != kCLAuthorizationStatusNotDetermined) {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
-    } else {
+    NSURL* settingsUrl;
+    if (!CLLocationManager.locationServicesEnabled) {
         if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"App-Prefs:root=Privacy&path=LOCATION"]];
+            settingsUrl = [NSURL URLWithString:@"App-Prefs:root=Privacy&path=LOCATION"];
         } else {
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=LOCATION_SERVICES"]];
+            settingsUrl = [NSURL URLWithString:@"prefs:root=LOCATION_SERVICES"];
         }
+    } else if (CLLocationManager.authorizationStatus != kCLAuthorizationStatusNotDetermined) {
+        settingsUrl = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+    } else {
+        NSLog(@"iOS: Location permission request needed");
+        reject(@"ERR_ENABLE_LOCATION", @"Location Services are enabled but Location permission request is required", nil);
     }
-    resolve(@(YES));
+
+    if (settingsUrl != nil) {
+        NSLog(@"iOS: trying to open Location settings at %@", settingsUrl);
+        [[UIApplication sharedApplication] openURL:settingsUrl options:@{} completionHandler:^(BOOL success) {
+            resolve(@(success));
+        }];
+    }
 }
 
 // MARK: CLLocationManagerDelegate
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-  [self sendActiveState:[self isLocationActiveState]
-                forType:@"location"];
+    [self sendActiveState:CLLocationManager.locationServicesEnabled
+                  forType:@"location"];
 }
 
 @end
