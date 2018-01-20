@@ -30,7 +30,7 @@ Interactively check Location Services and Bluetooth status
 ```js
 import ConnectivityManager from 'react-native-connectivity-status'
 
-// Check if Location Services are enabled (on Android) or app has Location permission (on iOS)
+// Check if Location Services are enabled
 const locationServicesAvailable = await ConnectivityManager.isLocationEnabled()
 
 // Check if Bluetooth is ON
@@ -69,6 +69,9 @@ ConnectivityManager.enableBluetooth()
 
 **ATTENTION:** On `iOS` the `enableLocation` method won't ask the user for `Location Permissions` but will redirect to
 `iOS` location settings screen to allow the user to enable `Location Services`.
+In case `Location Services` are active but `Location Permissions` have yet to be asked to the user the method call will throw an error.
+
+**ATTENTION:** Starting from `iOS 11` redirect to specific Settings page has been disabled, so the `enableLocation` method will only redirect to the `Settings` main screen.
 
 ---
 Made with :sparkles: & :heart: by [Mattia Panzeri](https://github.com/panz3r) and [contributors](https://github.com/nearit/react-native-connectivity-status/graphs/contributors)
