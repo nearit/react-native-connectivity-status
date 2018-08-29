@@ -133,20 +133,34 @@ RCT_EXPORT_METHOD(isBluetoothEnabled:(RCTPromiseResolveBlock) resolve
 
 // MARK: Location Permissions
 
-- (BOOL)isLocationActiveState {
-  switch (CLLocationManager.authorizationStatus) {
-    case kCLAuthorizationStatusNotDetermined:
-    case kCLAuthorizationStatusRestricted:
-    case kCLAuthorizationStatusDenied:
-      return NO;
-      
-    case kCLAuthorizationStatusAuthorizedWhenInUse:
-    case kCLAuthorizationStatusAuthorizedAlways:
-      return YES;
-      
-    default:
-      return NO;
-  }
+- (LocationPermissionState)isLocationPermissionGranted {
+    switch (CLLocationManager.authorizationStatus) {
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+            return LocationPermissionWhenInUse;
+        case kCLAuthorizationStatusAuthorizedAlways:
+            return LocationPermissionAlways;
+        default:
+            return LocationPermissionOff;
+    }
+}
+
+RCT_EXPORT_METHOD(isLocationPermissionGranted:(RCTPromiseResolveBlock) resolve
+                  rejecter:(RCTPromiseRejectBlock) reject) {
+    LocationPermissionState state = [self isLocationPermissionGranted];
+    switch (state) {
+        case LocationPermissionWhenInUse:
+            resolve(PERMISSION_LOCATION_GRANTED_WHEN_IN_USE);
+            break;
+        case LocationPermissionAlways:
+            resolve(PERMISSION_LOCATION_GRANTED_ALWAYS);
+            break;
+        case LocationPermissionOff:
+            resolve(PERMISSION_LOCATION_DENIED);
+            break;
+        default:
+            reject(LOCATION_PERMISSION_CHECK_ERROR)
+            break;
+    }
 }
 
 // MARK: Location Services
