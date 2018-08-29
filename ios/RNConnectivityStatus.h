@@ -2,6 +2,7 @@
 //  RNConnectivityStatus.h
 //
 //  Created by Mattia Panzeri on 10/10/2017.
+//  Latest changes by Federico Boschini on 08/29/2018
 //  Copyright © 2017 Near Srl. All rights reserved.
 //
 
@@ -17,5 +18,11 @@
 #define RN_CONNECTIVITY_STATUS_TOPIC @"RNConnectivityStatus"
 #define EVENT_TYPE @"eventType"
 #define EVENT_STATUS @"status"
+
+typedef NS_ENUM(NSInteger, LocationPermissionState) {
+    LocationPermissionOff,
+    LocationPermissionWhenInUse,
+    LocationPermissionAlways
+};
 
 @end

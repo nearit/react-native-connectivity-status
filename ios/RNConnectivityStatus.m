@@ -2,6 +2,7 @@
 //  RNConnectivityStatus.m
 //
 //  Created by Mattia Panzeri on 10/10/2017.
+//  Latest changes by Federico Boschini on 08/29/2018
 //  Copyright © 2017 Near Srl. All rights reserved.
 //
 
@@ -9,6 +10,11 @@
 #import "RNConnectivityStatus.h"
 
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+
+// Location permission status
+NSString* const RNCS_PERMISSION_LOCATION_GRANTED_ALWAYS = @"Location.Permission.Granted.Always";
+NSString* const RNCS_PERMISSION_LOCATION_GRANTED_WHEN_IN_USE = @"Location.Permission.Granted.WhenInUse";
+NSString* const RNCS_PERMISSION_LOCATION_DENIED = @"Location.Permission.Denied";
 
 @implementation RNConnectivityStatus {
   bool hasListeners;
@@ -48,6 +54,17 @@ RCT_EXPORT_MODULE()
   }
   
   return self;
+}
+
+- (NSDictionary *)constantsToExport
+{
+    return @{
+             @"Permissions": @{
+                     @"LocationGrantedAlways": RNCS_PERMISSION_LOCATION_GRANTED_ALWAYS,
+                     @"LocationGrantedWhenInUse": RNCS_PERMISSION_LOCATION_GRANTED_ALWAYS,
+                     @"LocationDenied": RNCS_PERMISSION_LOCATION_DENIED
+                     }
+             };
 }
 
 // MARK: RCTEventEmitter
@@ -92,16 +109,8 @@ RCT_EXPORT_MODULE()
 
 - (BOOL)isBluetoothActiveState:(CBManagerState)bluetoothState {
     switch (bluetoothState) {
-        case CBManagerStateUnknown:
-        case CBManagerStateResetting:
-        case CBManagerStateUnsupported:
-        case CBManagerStateUnauthorized:
-        case CBManagerStatePoweredOff:
-            return NO;
-
         case CBManagerStatePoweredOn:
             return YES;
-            
         default:
             return NO;
     }
@@ -112,19 +121,6 @@ RCT_EXPORT_METHOD(isBluetoothEnabled:(RCTPromiseResolveBlock) resolve
 {
     BOOL btIsActive = bluetoothManager && [self isBluetoothActiveState:bluetoothManager.state];
     resolve(@(btIsActive));
-}
-
-RCT_EXPORT_METHOD(enableBluetooth:(RCTPromiseResolveBlock) resolve
-                         rejecter:(RCTPromiseRejectBlock) reject)
-{
-    NSLog(@"iOS: trying to open Bluetooth settings");
-    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"App-Prefs:root=Bluetooth"]];
-    } else {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=Bluetooth"]];
-    }
-
-    resolve(@(YES));
 }
 
 // MARK: CBCentralManager Delegate
@@ -138,53 +134,41 @@ RCT_EXPORT_METHOD(enableBluetooth:(RCTPromiseResolveBlock) resolve
 
 // MARK: Location Permissions
 
-- (BOOL)isLocationActiveState {
-  switch (CLLocationManager.authorizationStatus) {
-    case kCLAuthorizationStatusNotDetermined:
-    case kCLAuthorizationStatusRestricted:
-    case kCLAuthorizationStatusDenied:
-      return NO;
-      
-    case kCLAuthorizationStatusAuthorizedWhenInUse:
-    case kCLAuthorizationStatusAuthorizedAlways:
-      return YES;
-      
-    default:
-      return NO;
-  }
+- (LocationPermissionState)isLocationPermissionGranted {
+    switch (CLLocationManager.authorizationStatus) {
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+            return LocationPermissionWhenInUse;
+        case kCLAuthorizationStatusAuthorizedAlways:
+            return LocationPermissionAlways;
+        default:
+            return LocationPermissionOff;
+    }
+}
+
+RCT_EXPORT_METHOD(isLocationPermissionGranted:(RCTPromiseResolveBlock) resolve
+                  rejecter:(RCTPromiseRejectBlock) reject) {
+    LocationPermissionState state = [self isLocationPermissionGranted];
+    switch (state) {
+        case LocationPermissionWhenInUse:
+            resolve(RNCS_PERMISSION_LOCATION_GRANTED_WHEN_IN_USE);
+            break;
+        case LocationPermissionAlways:
+            resolve(RNCS_PERMISSION_LOCATION_GRANTED_ALWAYS);
+            break;
+        case LocationPermissionOff:
+            resolve(RNCS_PERMISSION_LOCATION_DENIED);
+            break;
+        default:
+            reject(@"LOCATION_PERMISSION_CHECK_ERROR", @"Can't check location permission", nil);
+            break;
+    }
 }
 
 // MARK: Location Services
 
-RCT_EXPORT_METHOD(isLocationEnabled:(RCTPromiseResolveBlock) resolve
-                           rejecter:(RCTPromiseRejectBlock) reject)
-{
+RCT_EXPORT_METHOD(areLocationServicesEnabled:(RCTPromiseResolveBlock) resolve
+                           rejecter:(RCTPromiseRejectBlock) reject) {
     resolve(@(CLLocationManager.locationServicesEnabled));
-}
-
-RCT_EXPORT_METHOD(enableLocation:(RCTPromiseResolveBlock) resolve
-                          reject:(RCTPromiseRejectBlock) reject)
-{
-    NSURL* settingsUrl;
-    if (!CLLocationManager.locationServicesEnabled) {
-        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
-            settingsUrl = [NSURL URLWithString:@"App-Prefs:root=Privacy&path=LOCATION"];
-        } else {
-            settingsUrl = [NSURL URLWithString:@"prefs:root=LOCATION_SERVICES"];
-        }
-    } else if (CLLocationManager.authorizationStatus != kCLAuthorizationStatusNotDetermined) {
-        settingsUrl = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-    } else {
-        NSLog(@"iOS: Location permission request needed");
-        reject(@"ERR_ENABLE_LOCATION", @"Location Services are enabled but Location permission request is required", nil);
-    }
-
-    if (settingsUrl != nil) {
-        NSLog(@"iOS: trying to open Location settings at %@", settingsUrl);
-        [[UIApplication sharedApplication] openURL:settingsUrl options:@{} completionHandler:^(BOOL success) {
-            resolve(@(success));
-        }];
-    }
 }
 
 // MARK: CLLocationManagerDelegate
