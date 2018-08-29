@@ -12,9 +12,9 @@
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
 // Location permission status
-NSString* const PERMISSION_LOCATION_GRANTED_ALWAYS = @"Location.Permission.Granted.Always";
-NSString* const PERMISSION_LOCATION_GRANTED_WHEN_IN_USE = @"Location.Permission.Granted.WhenInUse";
-NSString* const PERMISSION_LOCATION_DENIED = @"Location.Permission.Denied";
+NSString* const RNCS_PERMISSION_LOCATION_GRANTED_ALWAYS = @"Location.Permission.Granted.Always";
+NSString* const RNCS_PERMISSION_LOCATION_GRANTED_WHEN_IN_USE = @"Location.Permission.Granted.WhenInUse";
+NSString* const RNCS_PERMISSION_LOCATION_DENIED = @"Location.Permission.Denied";
 
 @implementation RNConnectivityStatus {
   bool hasListeners;
@@ -60,9 +60,9 @@ RCT_EXPORT_MODULE()
 {
     return @{
              @"Permissions": @{
-                     @"LocationGrantedAlways": PERMISSION_LOCATION_GRANTED_ALWAYS,
-                     @"LocationGrantedWhenInUse": PERMISSION_LOCATION_GRANTED_ALWAYS,
-                     @"LocationDenied": PERMISSION_LOCATION_DENIED
+                     @"LocationGrantedAlways": RNCS_PERMISSION_LOCATION_GRANTED_ALWAYS,
+                     @"LocationGrantedWhenInUse": RNCS_PERMISSION_LOCATION_GRANTED_ALWAYS,
+                     @"LocationDenied": RNCS_PERMISSION_LOCATION_DENIED
                      }
              };
 }
@@ -150,13 +150,13 @@ RCT_EXPORT_METHOD(isLocationPermissionGranted:(RCTPromiseResolveBlock) resolve
     LocationPermissionState state = [self isLocationPermissionGranted];
     switch (state) {
         case LocationPermissionWhenInUse:
-            resolve(PERMISSION_LOCATION_GRANTED_WHEN_IN_USE);
+            resolve(RNCS_PERMISSION_LOCATION_GRANTED_WHEN_IN_USE);
             break;
         case LocationPermissionAlways:
-            resolve(PERMISSION_LOCATION_GRANTED_ALWAYS);
+            resolve(RNCS_PERMISSION_LOCATION_GRANTED_ALWAYS);
             break;
         case LocationPermissionOff:
-            resolve(PERMISSION_LOCATION_DENIED);
+            resolve(RNCS_PERMISSION_LOCATION_DENIED);
             break;
         default:
             reject(@"LOCATION_PERMISSION_CHECK_ERROR", @"Can't check location permission", nil);
