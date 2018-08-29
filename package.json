@@ -7,6 +7,9 @@
     "email": "mattia.panzeri93@gmail.com",
     "url": "https://github.com/panz3r"
   },
+  "contributors": [
+    "Federico Boschini <federico@nearit.com>"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
