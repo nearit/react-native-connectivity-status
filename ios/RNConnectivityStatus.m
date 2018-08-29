@@ -156,9 +156,8 @@ RCT_EXPORT_METHOD(enableBluetooth:(RCTPromiseResolveBlock) resolve
 
 // MARK: Location Services
 
-RCT_EXPORT_METHOD(isLocationEnabled:(RCTPromiseResolveBlock) resolve
-                           rejecter:(RCTPromiseRejectBlock) reject)
-{
+RCT_EXPORT_METHOD(areLocationServicesEnabled:(RCTPromiseResolveBlock) resolve
+                           rejecter:(RCTPromiseRejectBlock) reject) {
     resolve(@(CLLocationManager.locationServicesEnabled));
 }
 
