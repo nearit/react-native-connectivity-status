@@ -14,15 +14,12 @@ export default class ConnectivityManager {
     return RNConnectivityStatus.isBluetoothEnabled()
   }
 
-  static enableBluetooth () {
-    return RNConnectivityStatus.enableBluetooth()
+  static areLocationServicesEnabled () {
+    return RNConnectivityStatus.areLocationServicesEnabled()
   }
 
-  static isLocationEnabled () {
-    return RNConnectivityStatus.isLocationEnabled()
+  static isLocationPermissionGranted () {
+    return RNConnectivityStatus.isLocationPermissionGranted()
   }
 
-  static enableLocation () {
-    return RNConnectivityStatus.enableLocation()
-  }
 }
