@@ -108,16 +108,8 @@ RCT_EXPORT_MODULE()
 
 - (BOOL)isBluetoothActiveState:(CBManagerState)bluetoothState {
     switch (bluetoothState) {
-        case CBManagerStateUnknown:
-        case CBManagerStateResetting:
-        case CBManagerStateUnsupported:
-        case CBManagerStateUnauthorized:
-        case CBManagerStatePoweredOff:
-            return NO;
-
         case CBManagerStatePoweredOn:
             return YES;
-            
         default:
             return NO;
     }
