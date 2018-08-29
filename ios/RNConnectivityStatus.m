@@ -130,19 +130,6 @@ RCT_EXPORT_METHOD(isBluetoothEnabled:(RCTPromiseResolveBlock) resolve
     resolve(@(btIsActive));
 }
 
-RCT_EXPORT_METHOD(enableBluetooth:(RCTPromiseResolveBlock) resolve
-                         rejecter:(RCTPromiseRejectBlock) reject)
-{
-    NSLog(@"iOS: trying to open Bluetooth settings");
-    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"App-Prefs:root=Bluetooth"]];
-    } else {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs:root=Bluetooth"]];
-    }
-
-    resolve(@(YES));
-}
-
 // MARK: CBCentralManager Delegate
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
@@ -175,31 +162,6 @@ RCT_EXPORT_METHOD(enableBluetooth:(RCTPromiseResolveBlock) resolve
 RCT_EXPORT_METHOD(areLocationServicesEnabled:(RCTPromiseResolveBlock) resolve
                            rejecter:(RCTPromiseRejectBlock) reject) {
     resolve(@(CLLocationManager.locationServicesEnabled));
-}
-
-RCT_EXPORT_METHOD(enableLocation:(RCTPromiseResolveBlock) resolve
-                          reject:(RCTPromiseRejectBlock) reject)
-{
-    NSURL* settingsUrl;
-    if (!CLLocationManager.locationServicesEnabled) {
-        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"10.0")) {
-            settingsUrl = [NSURL URLWithString:@"App-Prefs:root=Privacy&path=LOCATION"];
-        } else {
-            settingsUrl = [NSURL URLWithString:@"prefs:root=LOCATION_SERVICES"];
-        }
-    } else if (CLLocationManager.authorizationStatus != kCLAuthorizationStatusNotDetermined) {
-        settingsUrl = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
-    } else {
-        NSLog(@"iOS: Location permission request needed");
-        reject(@"ERR_ENABLE_LOCATION", @"Location Services are enabled but Location permission request is required", nil);
-    }
-
-    if (settingsUrl != nil) {
-        NSLog(@"iOS: trying to open Location settings at %@", settingsUrl);
-        [[UIApplication sharedApplication] openURL:settingsUrl options:@{} completionHandler:^(BOOL success) {
-            resolve(@(success));
-        }];
-    }
 }
 
 // MARK: CLLocationManagerDelegate
