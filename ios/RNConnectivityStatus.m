@@ -2,6 +2,7 @@
 //  RNConnectivityStatus.m
 //
 //  Created by Mattia Panzeri on 10/10/2017.
+//  Latest changes by Federico Boschini on 08/29/2018
 //  Copyright © 2017 Near Srl. All rights reserved.
 //
 
