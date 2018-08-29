@@ -10,6 +10,11 @@
 
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
+// Location permission status
+NSString* const PERMISSION_LOCATION_GRANTED_ALWAYS = @"Location.Permission.Granted.Always";
+NSString* const PERMISSION_LOCATION_GRANTED_WHEN_IN_USE = @"Location.Permission.Granted.WhenInUse";
+NSString* const PERMISSION_LOCATION_DENIED = @"Location.Permission.Denied";
+
 @implementation RNConnectivityStatus {
   bool hasListeners;
   CLLocationManager *locationManager;
