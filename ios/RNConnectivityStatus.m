@@ -159,7 +159,7 @@ RCT_EXPORT_METHOD(isLocationPermissionGranted:(RCTPromiseResolveBlock) resolve
             resolve(PERMISSION_LOCATION_DENIED);
             break;
         default:
-            reject(LOCATION_PERMISSION_CHECK_ERROR)
+            reject(@"LOCATION_PERMISSION_CHECK_ERROR")
             break;
     }
 }
