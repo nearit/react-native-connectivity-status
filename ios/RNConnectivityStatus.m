@@ -50,6 +50,17 @@ RCT_EXPORT_MODULE()
   return self;
 }
 
+- (NSDictionary *)constantsToExport
+{
+    return @{
+             @"Permissions": @{
+                     @"LocationGrantedAlways": PERMISSION_LOCATION_GRANTED_ALWAYS,
+                     @"LocationGrantedWhenInUse": PERMISSION_LOCATION_GRANTED_ALWAYS,
+                     @"LocationDenied": PERMISSION_LOCATION_DENIED
+                     }
+             };
+}
+
 // MARK: RCTEventEmitter
 
 - (NSArray<NSString *> *)supportedEvents
