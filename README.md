@@ -31,7 +31,7 @@ Interactively check Location Services and Bluetooth status
 import ConnectivityManager from 'react-native-connectivity-status'
 
 // Check if Location Services are enabled
-const locationServicesAvailable = await ConnectivityManager.isLocationEnabled()
+const locationServicesAvailable = await ConnectivityManager.areLocationServicesEnabled()
 
 // Check Location permission
 const locationPermission = await ConnectivityManager.isLocationPermissionGranted()
